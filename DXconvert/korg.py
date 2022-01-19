@@ -1,36 +1,41 @@
 # convert Korg DS8 and 707 fourop FM voicedata
 # to Yamaha 4-OP FM voicedata
+from . import dx7
 from . import fourop
 from . import fb01
-from math import log
+import math
 from . import dxcommon
 try:
     range = xrange
 except NameError:
     pass
 
-#LFO SPEED
+#LFO
 lfs = (0.0334, 0.0502, 0.0803, 0.1133, 
-    0.1534, 0.2008, 0.2664, 0.3341, 
-    0.4001, 0.4551, 0.5176, 0.5887, 
-    0.6695, 0.7615, 0.8661, 0.985, 
-    1.1203, 1.2288, 1.3478, 1.4783, 
-    1.6215, 1.7785, 1.9508, 2.1397, 
-    2.3469, 2.5289, 2.7251, 2.9364, 
-    3.1642, 3.4096, 3.6741, 3.9591, 
-    4.2662, 4.4496, 4.6408, 4.8403, 
-    5.0483, 5.2652, 5.4915, 5.7276, 
-    5.9737, 6.2459, 6.5306, 6.8282, 
-    7.1393, 7.4647, 7.8049, 8.1605, 
-    8.5324, 9.4676, 10.5054, 11.6569, 
-    12.9345, 14.3523, 15.9254, 17.671, 
-    19.6078, 22.5952, 26.0378, 30.0048, 
-    34.5762, 39.8441, 45.9147, 52.9101)
+       0.1534, 0.2008, 0.2664, 0.3341, 
+       0.4001, 0.4551, 0.5176, 0.5887, 
+       0.6695, 0.7615, 0.8661, 0.9850, 
+       1.1203, 1.2288, 1.3478, 1.4783, 
+       1.6215, 1.7785, 1.9508, 2.1397, 
+       2.3469, 2.5289, 2.7251, 2.9364, 
+       3.1642, 3.4096, 3.6741, 3.9591, 
+       4.2662, 4.4496, 4.6408, 4.8403, 
+       5.0483, 5.2652, 5.4915, 5.7276, 
+       5.9737, 6.2459, 6.5306, 6.8282, 
+       7.1393, 7.4647, 7.8049, 8.1605, 
+       8.5324, 9.4676, 10.5054, 11.6569, 
+       12.9345, 14.3523, 15.9254, 17.6710, 
+       19.6078, 23.2450, 26.2230, 30.5773, 
+       35.0699, 40.2225, 46.1321, 52.9101) 
 
 lfsh = []
 for i in lfs:
     lfsh.append(16*i)
 lfsh = tuple(lfsh)
+
+amd = []
+for i in range(64):
+    amd.append(0.7279*i)
 
 dstimes = (0.04, 0.12, 0.28, 0.36, 0.52, 0.76, 1.0, 1.5, 2.0, 2.5,
         3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 
@@ -53,6 +58,16 @@ def delaytime_ds_v50(dstime):
 def dblrtime_ds_v50(dstime):
     vtime = int(round(dstimes[dstime]*2.))
     return min(80, vtime)
+
+lfdtime = (
+    0.000, 0.084, 0.095, 0.113,
+    0.141, 0.180, 0.224, 0.273,
+    0.330, 0.399, 0.467, 0.545,
+    0.625, 0.710, 0.820, 0.950,
+    1.086, 1.225, 1.385, 1.550,
+    1.740, 1.968, 2.240, 2.570,
+    2.980, 3.500, 4.123, 4.911,
+    5.800, 6.878, 8.032, 9.468)
 
 def korg7to8(mid):
     nn = len(mid)//8
@@ -371,21 +386,30 @@ def vce2vmm(vce, ds8=False):
         vmm = vce2vmm_707(vce)
     return vmm
 
-def ratio(carf, wtyp, spct, ring):
+def ratio(carf, wtyp, spct, ring, wfrm2=False):
     x = (carf + (wtyp % 2)) % 2 
-    mul = 2*spct + x
+    if (wtyp == 2) and (wfrm2 == True):
+        mul = spct
+    else:
+        mul = 2 * spct + x
     ratio = fb01.freq_fb01_dx21[4*mul + ring]
     return ratio
 
+def kvs_adjust(kvs, aeg=False):
+    if aeg:
+        return (0, 0, 1, 2, 2, 3, 3, 4)[kvs]
+    else:
+        return (0, 2, 2, 4, 4, 6, 6, 8)[kvs]
+        
 def vce2vmm_707(vce):
     #AMPADJUST1= #?
-    TIMADJUST1=12 #?
+    TIMADJUST1=6 #?
     #AMPADJUST2= #?
-    TIMADJUST2=12 #?
+    TIMADJUST2=6 #?
 
     vcd, acd, acd2, acd3, delay, efeds = fourop.initvcd(), fourop.initacd(), fourop.initacd2(), fourop.initacd3(), fourop.initdelay(), fourop.initefeds()
 
-    if vce[14] == 2:
+    if vce[14] == 2:  #XMOD
         vcd[52] = 3   #ALG 4
     else:
         vcd[52] = 4   #ALG 5
@@ -401,21 +425,25 @@ def vce2vmm_707(vce):
     else:
         lfspeed = lfs[vce[68]]
     vcd[54] = dxcommon.closeto(lfspeed, fourop.lfs, True) #Frequency | LFS
-    vcd[55] = int(vce[69]*99./31.) #Delay Time | LFD
-    vcd[56] = int(vce[70]*1.57) #Pitch Intensity | PMD
-    vcd[57] = dxcommon.closeto(0.75 * vce[71], fourop.amd) #Timbre/Ampl. Intensity | AMD
-    # vcd[58] = SY
+    vcd[55] = fourop.lfd(lfdtime[vce[69]])  #Delay Time | LFD
+    vcd[56] = math.ceil(int(650 * vce[70] / 63) / 10) #Pitch Intensity | PMD
+    #Timbre/Ampl. Intensity | AMD
+    vcd[57] = dxcommon.closeto(amd[vce[71]], fourop.amd, True)
+    vcd[58] = 0 #SYNC
     vcd[60] = 7 #PMS
     vcd[61] = 3 #AMS
     vcd[62] = (12,24,36,24)[vce[66]] #TRPS
     vcd[63] = vce[53] #MONO
-    vcd[64] = max(0, vce[72]-1) #PBR
+    if vce[72] < 2:
+        vcd[64] = vce[72]
+    else:
+        vcd[64] = vce[72]-1 #PBR
     if vce[53] == 1:
         vcd[65] = vce[47] #PORMOD
         vcd[66] = int(round(63*vce[48]/99.)) #PORT
 
-    vcd[71] = vce[72] * 33 #MW PITCH
-    vcd[72] = vce[73] * 33 #MW AMPLI
+    vcd[71] = vce[74] * 33 #MW PITCH ?
+    # vcd[72] = #MW AMPL
     
     for k in range(10):
         vcd[k+77] = vce[k+56] + 32 #VOICE NAME
@@ -446,11 +474,14 @@ def vce2vmm_707(vce):
     vcd[n+8] = vce[46]>>1 #AME
     vcd[n+9] = vce[52] #KVS
     if vce[39] > 0:
-        vcd[n+10] = int(round(8 * log(vce[39],2) + 51)) #OUT
+        vcd[n+10] = min(99, int(round(48 + 29*math.log(vce[39], 10)))) #OUT
+        vcd[n+10] = max(0, vcd[n+10] - kvs_adjust(vce[52], True))
     else:
         vcd[n+10] = 0
     vcd[n+11] = fb01.freq_fb01_dx21[4*vce[1]] #MUL (IH=0)
-    vcd[n+12] = 3 + vce[2] #DET
+    vcd[n+12] = 3 - vce[2] #DET
+    if vce[14] == 14:
+        vcd[n+12] = 3 - vce[2]//2
 
     # OP2 modulator OSC2 timbre
     n = 13
@@ -463,14 +494,24 @@ def vce2vmm_707(vce):
     vcd[n+3] = 15 - REL  #RR = REL
     SUS = int(round((15-vce[31]) * vce[27]/15.))
     vcd[n+4] = 15 - SUS      #D1L = SUS
-    vcd[n+5] = 33 * (3 - vce[18]) #LS
+    #LS timbre
+    if vce[18] < 1:
+        vcd[n+5] = 18 #LS
+    elif vce[18] > 1:
+        acd2[8] = 4
+        vcd[n+5] = (16, 34)[vce[18]-2]
+    else:
+        vcd[n+5] = 0
     vcd[n+6] = vce[28] #RS = KBD
     vcd[n+7] = 2 * vce[79] #EBS
     vcd[n+8] = vce[45]>>1 #AME
     vcd[n+9] = vce[50] #KVS
     vcd[n+10] = min(99, vce[26] + TIMADJUST2) #OUT
-    vcd[n+11] = ratio(vce[1], vce[14], vce[15], vce[16]) #OSC2, TYPE, SPCT, RING 
-    #vcd[n+12] = #DET
+    vcd[n+10] = max(0, vcd[n+10] - kvs_adjust(vce[50], False))
+    vcd[n+11] = ratio(vce[1], vce[14], vce[15], vce[16], True) #OSC2, TYPE, SPCT, RING 
+    vcd[n+12] = 3 - vce[2] #DET
+    if vce[14] == 2:
+        vcd[n+12] == 3 - vce[2]//2
 
     # OP3 carrier OSC1 amp
     n=26
@@ -484,13 +525,18 @@ def vce2vmm_707(vce):
     vcd[n+7] = 2 * vce[79] #EBS
     vcd[n+8] = vce[46]&1 #AME
     vcd[n+9] = vce[51] #KVS
+
     if vce[33] > 0:
-        vcd[n+10] = int(round(8 * log(vce[33],2) + 51)) #OUT
+        vcd[n+10] = int(round(29 * math.log(vce[33], 10) + 48)) #OUT
+        if vce[14] == 2:
+            vcd[n+10] = vcd[n+10] + 2
+        vcd[n+10] = min(99, vcd[n+10])
+        vcd[n+10] = max(0, vcd[n+10] - kvs_adjust(vce[51], True))
     else:
         vcd[n+10] = 0
-    vcd[n+11] = fb01.freq_fb01_dx21[vce[0]*4] #MUL
-    vcd[n+12] = 3 - vce[2] #DET
 
+    vcd[n+11] = fb01.freq_fb01_dx21[vce[0]*4] #MUL
+    vcd[n+12] = 3 + vce[2] #DET
 
     # OP4 modulator OSC1 timbre
     n=0
@@ -503,14 +549,23 @@ def vce2vmm_707(vce):
     vcd[3] = 15 - REL  #RR = REL
     SUS = int(round((15-vce[24]) * vce[20]/15.))
     vcd[4] = 15 - SUS      #D1L = SUS
-    vcd[5] = 33 * (3 - vce[13]) #LS
+    #LS timbre
+    if vce[13] < 1:
+        vcd[5] = 18
+    elif vce[13] > 1:
+        acd2[8] += 1
+        vcd[5] = (16, 32)[vce[13]-2]
+    else:
+        vcd[5] = 0
+ 
     vcd[n+6] = vce[21] #RS = KBD
-    vcd[7] = 2 * vce[78] #EBS
-    vcd[8] = vce[45]&1 #AME
-    vcd[9] = vce[49] #KVS
-    vcd[10] = min(99, vce[19] + TIMADJUST1) #OUT
-    vcd[11] = ratio(vce[0], vce[9], vce[10], vce[11]) #OSC1, TYPE, SPCT, RING 
-    #vcd[n+12] = #DET
+    vcd[n+7] = 2 * vce[78] #EBS
+    vcd[n+8] = vce[45]&1 #AME
+    vcd[n+9] = vce[49] #KVS
+    vcd[n+10] = min(99, vce[19] + TIMADJUST1) #OUT
+    vcd[n+10] = max(0, vcd[n+10] - kvs_adjust(vce[49], False))
+    vcd[n+11] = ratio(vce[0], vce[9], vce[10], vce[11]) #OSC1, TYPE, SPCT, RING 
+    vcd[n+12] = 3 + vce[2] #DET
     
     acd2[0] = int(round(99*vce[77]/3.)) #AT PITCH
     # acd2[1] = #AT AMPL
@@ -520,11 +575,12 @@ def vce2vmm_707(vce):
     vmm = fourop.vcd2vmm(vcd, acd, acd2, acd3, efeds, delay)
     return vmm
 
+
 def vce2vmm_ds8(vce):
     #AMPADJUST1= #?
-    TIMADJUST1=12 #?
+    TIMADJUST1=6 #?
     #AMPADJUST2= #?
-    TIMADJUST2=12 #?
+    TIMADJUST2=6 #?
 
     vcd, acd, acd2, acd3, delay, efeds = fourop.initvcd(), fourop.initacd(), fourop.initacd2(), fourop.initacd3(), fourop.initdelay(), fourop.initefeds()
 
@@ -544,15 +600,16 @@ def vce2vmm_ds8(vce):
     else:
         lfspeed = lfs[vce[67]]
     vcd[54] = dxcommon.closeto(lfspeed, fourop.lfs, True) #Frequency | LFS
-    vcd[55] = int(vce[68]*99./31.) #Delay Time | LFD
-    vcd[56] = int(vce[69]*1.57) #Pitch Intensity | PMD
-    vcd[57] = dxcommon.closeto(0.75 * vcd[70], fourop.amd) #Timbre/Ampl. Intensity | AMD
-    # vcd[58] = SY
+    vcd[55] = fourop.lfd(lfdtime[vce[68]])  #Delay Time | LFD
+    vcd[56] = math.ceil(int(650 * vce[69] / 63) / 10) #Pitch Intensity | PMD
+    #Timbre/Ampl. Intensity | AMD
+    vcd[57] = dxcommon.closeto(amd[vce[70]], fourop.amd, True)
+    vcd[58] = 0 #SYNC
     vcd[60] = 7 #PMS
     vcd[61] = 3 #AMS
     vcd[62] = 24 #TRPS
     vcd[63] = vce[53] #MONO
-    vcd[64] = max(0, vce[77]) #PBR
+    vcd[64] = vce[77] #PBR
     if vce[53] == 1:
         vcd[65] = vce[47] #PORMOD
         vcd[66] = int(round(63*vce[48]/99.)) #PORT
@@ -626,7 +683,8 @@ def vce2vmm_ds8(vce):
     vcd[n+8] = vce[46]>>1 #AME
     vcd[n+9] = vce[52] #KVS
     if vce[39] > 0:
-        vcd[n+10] = int(round(8 * log(vce[39],2) + 51)) #OUT
+        vcd[n+10] = min(99, int(round(48 + 29*math.log(vce[39], 10)))) #OUT
+        vcd[n+10] = max(0, vcd[n+10] - kvs_adjust(vce[52], True))
     else:
         vcd[n+10] = 0
     vcd[n+11] = fb01.freq_fb01_dx21[4*vce[1]] #MUL (IH=0)
@@ -643,14 +701,23 @@ def vce2vmm_ds8(vce):
     vcd[n+3] = 15 - REL  #RR = REL
     SUS = int(round((15-vce[30]) * vce[27]/15.))
     vcd[n+4] = 15 - SUS      #D1L = SUS
-    vcd[n+5] = 33 * (3 - vce[18]) #LS
+    #LS timbre
+    if vce[18] < 1:
+        vcd[n+5] = 18
+    elif vce[18] > 1:
+        acd2[8] += 1
+        vcd[n+5] = (16, 32)[vce[18]-2]
+    else:
+        vcd[n+5] = 0
+ 
     vcd[n+6] = vce[32] #RS = KBD
     vcd[n+7] = 2 * vce[81] #EBS
     vcd[n+8] = vce[45]>>1 #AME
     vcd[n+9] = vce[50] #KVS
     vcd[n+10] = min(99, vce[26] + TIMADJUST2) #OUT
-    vcd[n+11] = ratio(vce[1], vce[14], vce[15], vce[16]) #OSC2, TYPE, SPCT, RING 
-    #vcd[n+12] = #DET
+    vcd[n+10] = max(0, vcd[n+10] - kvs_adjust(vce[50], False))
+    vcd[n+11] = ratio(vce[1], vce[14], vce[15], vce[16], True) #OSC2, TYPE, SPCT, RING, WFRM2 
+    vcd[n+12] = 3 + vce[2] #DET
 
     # OP3 carrier OSC1 amp
     n=26
@@ -665,7 +732,11 @@ def vce2vmm_ds8(vce):
     vcd[n+8] = vce[46]&1 #AME
     vcd[n+9] = vce[51] #KVS
     if vce[33] > 0:
-        vcd[n+10] = int(round(8 * log(vce[33],2) + 51)) #OUT
+        vcd[n+10] = 29 * math.log(vce[33], 10) + 48 #OUT
+        vcd[n+10] = max(0, vcd[n+10] - kvs_adjust(vce[51], True))
+        if vce[14] == 2:
+            vcd[n+10] = vcd[n+10] + 2
+        vcd[n+10] = min(99, int(round(vcd[n+10])))
     else:
         vcd[n+10] = 0
     vcd[n+11] = fb01.freq_fb01_dx21[vce[0]*4] #MUL
@@ -682,14 +753,23 @@ def vce2vmm_ds8(vce):
     vcd[3] = 15 - REL  #RR = REL
     SUS = int(round((15-vce[23]) * vce[20]/15.))
     vcd[4] = 15 - SUS      #D1L = SUS
-    vcd[5] = 33 * (3 - vce[13]) #LS
+    #LS timbre
+    if vce[13] < 1:
+        vcd[5] = 18
+    elif vce[13] > 1:
+        acd2[8] += 1
+        vcd[5] = (16, 32)[vce[13]-2]
+    else:
+        vcd[5] = 0
+ 
     vcd[n+6] = vce[25] #RS = KBD
     vcd[7] = 2 * vce[81] #EBS
     vcd[8] = vce[45]&1 #AME
     vcd[9] = vce[49] #KVS
     vcd[10] = min(99, vce[19] + TIMADJUST1) #OUT
+    vcd[n+10] = max(0, vcd[n+10] - kvs_adjust(vce[49], False))
     vcd[11] = ratio(vce[0], vce[9], vce[10], vce[11]) #OSC1, TYPE, SPCT, RING 
-    #vcd[n+12] = #DET
+    vcd[n+12] = 3 - vce[2] #DET
     
     acd2[0] = int(round(99*vce[80]/3.)) #AT PITCH
     #acd2[1] = #AT AMPL
@@ -705,4 +785,73 @@ def vcename(vce):
         s += chr(vce[k+56] + 32) 
     #VOICE NAME
     return s
+
+def vce2vmem(vce, ds8):
+    vmm = vce2vmm(vce, ds8)
+    vmem = fourop.vmm2vmem(vmm)[0]
+    amem = fourop.vmm2vmem(vmm)[1]
+
+    # FB + OSCSYNC
+    vmem[111] += 8
+
+    # LEVEL SCALING
+    # BP = 27 (C2)
+    vmem[8] = 27
+    vmem[8+17] = 27
+    vmem[8+34] = 27
+    vmem[8+51] = 27
+    
+    #OP6 OSC1 timbre
+    KBD = vce[13]
+    vmem[9] = (14, 0, 8, 22)[KBD] #LD
+    vmem[10] = (9, 0, 8, 17)[KBD] #RD
+    LC = (3, 3, 0, 0)[KBD]
+    RC = (0, 0, 3, 3)[KBD]
+    vmem[11] = 4*RC + LC
+ 
+    #OP5 OSC1 amp
+    if vce[33] > 0:
+        vmem[31] = 48 + 29*math.log(vce[33], 10) #OUTPUT LEVEL
+        if vce[14] == 2:
+            vmem[31] += 2
+        vmem[31] = int(round(min(99, vmem[31])))
+        vmem[31] = max(0, vmem[31] - kvs_adjust(vce[51], True))
+    else:
+        vmem[31] = 0
+    outB = vmem[31]
+
+    #OP4 OSC2 timbre
+    KBD = vce[18]
+    vmem[9+34] = (14, 0, 8, 22)[KBD] #LD
+    vmem[10+34] = (9, 0, 8, 17)[KBD] #RD
+    LC = (3, 3, 0, 0)[KBD]
+    RC = (0, 0, 3, 3)[KBD]
+    vmem[11+34] = 4*RC + LC
+
+    #OP3 OSC2 amp
+    if vce[39] > 0:
+        vmem[65] = min(99, int(round(48 + 29*math.log(vce[39], 10)))) #OUTPUT LEVEL
+        vmem[65] = max(0, vmem[65] - kvs_adjust(vce[52], True))
+    else:
+        vmem[14+51] = 0
+
+    #LFO DS8|707
+    if ds8:
+        lfoadr = 66
+    else:
+        lfoadr = 67
+    vmem[112] = dxcommon.closeto(lfs[vce[lfoadr+1]], dx7.lfs, True)  #Frequency | LFS
+    vmem[113] = dx7.lfd(lfdtime[vce[lfoadr+2]]) #Delay Time | LFD
+    vmem[114] = math.ceil(int(650 * vce[lfoadr+3] /63) / 10) #Pitch Intensity | PMD
+    if vce[lfoadr + 4] == 0:
+        vmem[115] = 0
+    else:
+        vmem[115] = int(round(46 * math.log(vce[lfoadr+4], 10))) #Timbre/Ampl Intensity | AMD
+    return vmem, amem
+
+def bnk2vmem(bnk, ds8):
+    vce = bnk2vce(bnk, ds8)
+    vmem, amem = vce2vmem(vce, ds8)
+    return vmem, amem
+
 

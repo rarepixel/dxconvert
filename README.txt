@@ -1,5 +1,5 @@
 DXCONVERT/TXCONVERT version 3.x
-date: 20200515
+date: 20210508
 
 ===================================
 
@@ -37,7 +37,7 @@ give you some idea about the use of TXconvert also.
 
 REQUIREMENTS?
 
-These tools were written using Python 3.7 
+These tools were written using Python 3.8 
 If you install the latest stable version of 3.x it should work.
 It might also work with Python 2.7, but this is not guaranteed anymore.
 
@@ -198,9 +198,11 @@ THANKS:
 Many thanks go to Charles Copp (DX200 import ideas), Renata Dokmanovic (a 
 lot), Sean Bolton (FB01 import and Hexter-DSSI, which I used a lot for 
 testing sounds.), Paul Deco (heavy testing), Daniel Forró (exotic file examples),
-Jon Morgan (FM-ALive DX Manager), Sam (VOPM), and several members of the Yahoo 
-DX7 and DX200 groups who helped me with facts, figures, file examples, bugreports, 
-feature requests, and good ideas to create and improve this program.
+Jon Morgan (FM-ALive DX Manager), Sam (VOPM), Steve Finney (Reface DX testing), 
+ChunkyBloke (Korg DS-8 testing and conversion improvements)
+and several members of Yahoo forums and Facebook groups who helped me with facts, 
+figures, file examples, bugreports, feature requests, PayPal donations and good 
+ideas to create and improve this program.
 
 ==========================================================================
 
@@ -211,10 +213,20 @@ DXconvert is published under GPL v3 or higher. See LICENCE.txt
 
 =========================================================================
 
+DONATIONS:
+
+Do you want to support this project? 
+Donations are welcome: 
+https://paypal.me/mtarenskeen
+
+==========================================================================
+
 CONTACT:
 
 m.tarenskeenATkpnmail.nl
-or join the Yahoo YamahaDX group(s)
+
+or join the Facebook Yamaha DX7 owners, Yamaha Reface, Yamaha Soundmondo, Korg DS8 & 707, and/or Yamaha V50 group(s), 
+or join the YamahaDX forum at groups.io 
 
 Enjoy DXconvert and have more fun with your Yamaha synths!
 

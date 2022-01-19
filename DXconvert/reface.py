@@ -12,6 +12,10 @@ except NameError:
     pass
 
 #OUT level
+out_rdx_dx7 = [10, 11, 11, 13, 15, 17, 18, 20, 22, 24, 25, 27, 29, 31, 33, 34, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 52, 53, 53, 54, 54, 55, 55, 56, 56, 57, 57, 58, 58, 59, 59, 60, 60, 61, 61, 62, 62, 63, 63, 64, 64, 65, 65, 66, 66, 67, 67, 68, 68, 69, 69, 70, 70, 71, 71, 72, 72, 73, 73, 74, 74, 75, 75, 76, 76, 77, 77, 78, 78, 79, 79, 80, 80, 81, 81, 82, 82, 83, 83, 84, 99, 84, 85, 85, 86, 86, 87, 87, 88, 88, 89, 89, 90, 90, 91, 91, 92, 92, 93, 93, 94, 94, 95, 95, 96, 96, 97, 97, 98, 98, 99]
+
+out_dx7_rdx = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 3, 4, 4, 5, 5, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 33, 35, 37, 39, 41, 43, 45, 47, 49, 51, 53, 55, 57, 59, 61, 63, 65, 67, 69, 71, 73, 75, 77, 79, 81, 83, 85, 87, 89, 91, 93, 95, 98, 100, 102, 104, 106, 108, 110, 112, 114, 116, 118, 120, 122, 124, 126, 127]
+
 out_rdx_4op = (
         0, 0, 0, 5, 11, 13, 15, 17, 20, 21, 23, 25, 28, 30, 32, 33, 
         35, 37, 38, 39, 40, 41, 42, 43, 43, 45, 46, 47, 48, 49, 49, 50, 
@@ -58,23 +62,22 @@ for i in lfs:
 lfs += lfsh8
 lfs = tuple(lfs)
 
-
-amd = (0.000, 0.050, 0.100, 0.150, 0.200, 0.250, 0.300, 0.350, 
-        0.400, 0.472, 0.557, 0.657, 0.775, 0.914, 1.078, 1.272,
-        1.500, 1.662, 1.841, 2.039, 2.258, 2.502, 2.771, 3.069,
-        3.400, 3.658, 3.935, 4.233, 4.554, 4.899, 5.271, 5.670,
-        6.100, 6.447, 6.814, 7.202, 7.612, 8.046, 8.504, 8.988,
-        9.500, 9.945, 10.411, 10.898, 11.408, 11.943, 12.502, 13.087, 
-        13.700, 14.243, 14.808, 15.395, 16.006, 16.641, 17.301, 17.987, 
-        18.700, 19.322, 19.966, 20.630, 21.317, 22.026, 22.760, 23.517, 
-        24.300, 25.031, 25.784, 26.559, 27.358, 28.180, 29.028, 29.901, 
-        30.800, 31.619, 32.461, 33.324, 34.211, 35.121, 36.056, 37.015, 
-        38.000, 38.897, 39.816, 40.756, 41.718, 42.703, 43.711, 44.744, 
-        45.800, 46.742, 47.703, 48.684, 49.685, 50.707, 51.750, 52.814, 
-        53.900, 54.818, 55.752, 56.702, 57.668, 58.651, 59.650, 60.666, 
-        61.700, 62.420, 63.148, 63.885, 64.630, 65.385, 66.147, 66.919, 
-        67.700, 68.140, 68.583, 69.028, 69.477, 69.928, 70.382, 70.840, 
-        71.300, 71.400, 71.499, 71.599, 71.699, 71.799, 71.900, 72.000)
+amd = (0.00, 0.05, 0.10, 0.12, 0.15, 0.20, 0.25, 0.30,
+        0.40, 0.50, 0.60, 0.80, 0.90, 1.00, 1.20, 1.40,
+        1.60, 1.80, 2.00, 2.20, 2.40, 2.70, 2.90, 3.20,
+        3.50, 3.80, 4.10, 4.40, 4.70, 5.10, 5.40, 5.80,
+        6.10, 6.50, 6.90, 7.30, 7.80, 8.20, 8.70, 9.10,
+        9.60, 10.10, 10.50, 11.00, 11.50, 12.00, 12.60, 13.10,
+        13.70, 14.30, 14.90, 15.50, 16.10, 16.70, 17.30, 18.00,
+        18.65, 19.30, 20.00, 20.70, 21.40, 22.10, 22.90, 23.60,
+        24.40, 25.10, 25.90, 26.70, 27.50, 28.30, 29.15, 30.00,
+        30.85, 31.70, 32.60, 33.50, 34.40, 35.30, 36.20, 37.15,
+        38.10, 39.00, 39.95, 41.00, 41.95, 42.90, 44.00, 44.90,
+        46.00, 46.90, 48.00, 49.00, 50.10, 51.20, 52.20, 53.10,
+        54.30, 55.40, 56.40, 57.60, 58.80, 59.90, 60.90, 61.80,
+        63.00, 64.30, 65.20, 66.10, 67.50, 67.80, 69.50, 70.20,
+        71.10, 71.30, 72.10, 73.50, 73.70, 74.00, 74.80, 76.00,
+        76.12, 76.25, 76.37, 76.50, 76.62, 76.75, 76.87, 77.00)
 
 amd_4op_reface = (0, 0, 0, 0, 0, 6, 6, 6, 6, 14, 
         14, 14, 14, 18, 18, 18, 18, 21, 21, 21,
@@ -86,6 +89,20 @@ amd_4op_reface = (0, 0, 0, 0, 0, 6, 6, 6, 6, 14,
         59, 59, 60, 61, 62, 63, 64, 65, 66, 67, 
         68, 69, 70, 71, 72, 73, 74, 77, 77, 79, 
         81, 82, 84, 85, 88, 89, 92, 92, 95, 95)
+
+def lfdtime(lfd):
+    if lfd == 0:
+        return 0
+    step = 1.03477327
+    start = 0.03646005
+    return step**lfd * start
+
+def lfd(t):
+    if t == 0:
+        return 0
+    step = 1.03477327
+    start = 0.03646005
+    return int(round(max(0, min(127, log(t/start, step)))))
 
 #EG
 RR = (0, 0, 1, 2, 4, 5, 7, 8, 10, 11,
@@ -175,7 +192,7 @@ def carrier(alg, op):
     return bool(CM[alg][op])
 
 #ALGO conversion
-#from dx100 to dx7/9
+#ALG from dx100 to dx7/9
 def alg6(alg4, op4):
     alg6 = (0, 13, 7, 6, 4, 21, 30, 31)[alg4]
     if alg4 == 2:
@@ -185,8 +202,7 @@ def alg6(alg4, op4):
     op6ad = 21*(5-op6)
     return alg6, op6, op6ad
 
-
-#from dx100 to reface
+#ALG from dx100 to reface
 def alg(alg4, op4):
     alg = (0, 1, 2, 2, 7, 8, 10, 11)[alg4]
     if alg4 == 3:
@@ -196,7 +212,13 @@ def alg(alg4, op4):
     opad = 28*op + 38
     return alg, op, opad
 
-#from reface to dx100
+#ALG from reface to dx100
+#TODO
+
+#ALG from dx7 to reface
+#TODO
+
+#ALG from reface to dx9
 #TODO
 
 def initrdx():
@@ -235,7 +257,7 @@ def dx9tordx(vmem):
     else:
         val = dxcommon.closeto(lfspeed, lfs[:128])
         rdx[0x12] = min(127, val) #LFO Speed 0~127
-    rdx[0x13] = vced[138] * 127 // 99 #LFO Delay 0~127 TODO
+    rdx[0x13] = lfd(dx7.lfdtime(vced[138])) #LFO Delay
     #PMD
     pmdepth = (0, 90., 180., 300., 500., 850., 1400., 2400.)[vced[143]] * vced[139] / 99.
     if pmdepth != 0:
@@ -287,7 +309,10 @@ def dx9tordx(vmem):
         rdx[0x0b + opad] = int(round(127 * vced[op6ad + 10] / 99)) #LS Right Depth
         rdx[0x0c + opad] = vced[op6ad + 11] #LC
         rdx[0x0d + opad] = vced[op6ad + 12] #RC
-#        rdx[0x0e + opad] = amd_4op_reface[vcd[57] * vcd[8 + op4ad]]  #LFO AM depth
+       
+        # rdx[0x0e + opad] = amd_4op_reface[vcd[57] * vcd[8 + op4ad]]  #LFO AM depth * AME
+        # amdx = dx7.amd[vced[140]]
+        # rdx[0x0e + opad] = dxcommon.closeto(amdx, amd, True)
         '''
         if carrier(ALG, op):
             rdx[0x0f + opad] = 1 #LFO PM depth Off/On
@@ -298,10 +323,12 @@ def dx9tordx(vmem):
         rdx[0x10 + opad] = 0 #PEG Off, On 
         rdx[0x11 + opad] = vced[15 + op6ad] << 4 #KVS
        
-        rdx[0x12 + opad] = out_4op_rdx[vcd[op4ad+10]] #OUT
-        
+        OUT = out_4op_rdx[vcd[op4ad+10]] #OUT
+        rdx[0x12 + opad] = OUT
+
         if op4 == 3: #FEEDBACK operator
             rdx[0x13 + opad] = 8 * vced[135] #? 
+
         fr = dx7.dx7_freq(vced[op6ad+18], vced[op6ad+19])
         while fr>31.99:
             fr /= 2
@@ -315,7 +342,7 @@ def dx9tordx(vmem):
         det = vced[20 + op6ad] - 7 
         det = int(round(12*det/7))
         rdx[0x18 + opad] = det + 64 # DETUNE -64~+63 (center=64)
-    return rdx
+    return cleanrdx(rdx)
 
 def fb2rdx(fb):
     vmm = fb01.fb2vmm(fb)
@@ -332,7 +359,7 @@ def fb2rdx(fb):
     else:
         lfspeed = fb01.lfs[fb[8]]
         rdx[0x12] = dxcommon.closeto(lfspeed, lfs[:128]) #LFO Speed 0~127
-    return rdx
+    return cleanrdx(rdx)
 
 def korg2rdx(bnk, ds8=True):
     '''
@@ -343,7 +370,6 @@ def korg2rdx(bnk, ds8=True):
     vce74: FREQ/SPEED (0~31)
     vce75: INT/DEPTH (0~31)
     vcd76: EFFECT LEVEL (0~15)
-
     '''
     vce = korg.bnk2vce(bnk, ds8)
     vmm = korg.vce2vmm(vce, ds8)
@@ -397,7 +423,7 @@ def korg2rdx(bnk, ds8=True):
             rdx[0x12] = dxcommon.closeto(lfspeed, lfs[:128]) #LFO Speed 0~127
 
 
-    else:
+    else: #707
         if rdx[0x11] == 6:
             lfspeed = korg.lfsh[vce[68]]
             val = dxcommon.closeto(lfspeed, lfs)
@@ -409,8 +435,58 @@ def korg2rdx(bnk, ds8=True):
         else:
             lfspeed = korg.lfs[vce[68]]
             rdx[0x12] = dxcommon.closeto(lfspeed, lfs[:128]) #LFO Speed 0~127
+        rdx[0x0c] = (0x40-12, 0x40, 0x40+12)[vce[66]]
 
-    return rdx
+    #LEVELSCALING TIMBRE
+    # op4( if xmod: 3) / osc1 timbre = vce[13]
+    if vce[14] == 2:
+        opad = 28*2 + 38
+    else:
+        opad = 28*3 + 38
+    rdx[0x0a + opad] = (24, 0, 14, 28)[vce[13]] #LD
+    rdx[0x0b + opad] = (6, 0, 5, 11)[vce[13]] #RD
+    if vce[13] > 1:
+        rdx[0x0c + opad] = 0 #-LIN
+        rdx[0x0d + opad] = 3 #+LIN
+    else:
+        rdx[0x0c + opad] = 3 #+LIN
+        rdx[0x0d + opad] = 0 #-LIN
+    #level correction
+    correction = (-6, 0, 5, 11)[vce[13]]
+    if rdx[0x12 + opad] < 32:
+        correction = correction//2
+    if rdx[0x12 + opad] < 16:
+        correction = correction//2
+    if rdx[0x12 + opad] < 4:
+        correction = correction//2
+    rdx[0x12 + opad] += correction
+    rdx[0x12 + opad] = max(0, min(127, rdx[0x12 + opad]))
+    
+    # op2 (if xmod: 4) / osc2timbre = vce[18]
+    if vce[14] == 2:
+        opad = 28*3 + 38
+    else:
+        opad = 28 + 38
+    rdx[0x0a + opad] = (24, 0, 14, 28)[vce[18]] #LD
+    rdx[0x0b + opad] = (6, 0, 5, 11)[vce[18]] #RD
+    if vce[18] > 1:
+        rdx[0x0c + opad] = 0 #-LIN
+        rdx[0x0d + opad] = 3 #+LIN
+    else:
+        rdx[0x0c + opad] = 3 #+LIN
+        rdx[0x0d + opad] = 0 #-LIN
+    #level correction
+    correction = (-6, 0, 5, 11)[vce[18]]
+    if rdx[0x12 + opad] < 32:
+        correction = correction//2
+    if rdx[0x12 + opad] < 16:
+        correction = correction//2
+    if rdx[0x12 + opad] < 4:
+        correction = correction//2
+    rdx[0x12 + opad] += correction
+    rdx[0x12 + opad] = max(0, min(127, rdx[0x12 + opad]))
+
+    return cleanrdx(rdx)
 
 #Reface DX detune (0 .. 127 = -64 ... +63 = *0.978531766 ... *1.021592756 
 def rdx2detune(value):
@@ -426,11 +502,12 @@ def vmm2rdx(vmm):
     vcd, acd, acd2, acd3, efeds, delay = fourop.vmm2vcd(vmm)
 
     rdx = initrdx()
+
     #VOICE common
     rdx[0:0x0a] = vcd[77:87] #Voice Name ASCII 32~126
     rdx[0x0a] = 0 #reserved
     rdx[0x0b] = 0 #reserved
-    rdx[0x0c] = vcd[62] + 40 #Transpose = 0x28~0x58 = -24~+24
+    rdx[0x0c] = vcd[62] + 40 #Transpose = 0x28 0x40 0x58 = -24 00 +24
     rdx[0x0d] = vcd[63] * (vcd[65] + 1)
     #Partmode = POLY, MONO-FULL, MONO-LGATO
     rdx[0x0e] = vcd[66] * 127 // 99 #Portamento = 0~127
@@ -452,7 +529,7 @@ def vmm2rdx(vmm):
     else:
         rdx[0x12] = dxcommon.closeto(lfspeed, lfs[:128]) #LFO Speed 0~127
     
-    rdx[0x13] = min(127, 2*vcd[55])  #LFO Delay 0~127 TODO
+    rdx[0x13] = lfd(fourop.lfdtime(vcd[55]))  #LFO Delay 0~127
     #PMD
     pmdepth = (0, 9.3, 21.9, 45.7, 96.0, 195.2, 794.4, 1587.8)[vcd[60]] * vcd[56] / 99.
     if pmdepth != 0:
@@ -463,6 +540,7 @@ def vmm2rdx(vmm):
     rdx[0x16] = int(round(vcd[88] * 127 / 99.)) #Pitch EG Rate2 0~127
     rdx[0x17] = 127 #Pitch EG Rate3 0~127
     rdx[0x18] = int(round( vcd[89] * 127 / 99.)) #Pitch EG Rate 4 0~127
+
     rdx[0x19] = vcd[90] + 14 #Pitch EG Level1 0x10~0x70 = -48~+48
     rdx[0x1a] = vcd[91] + 14 #Pitch EG Level2 0x10~0x70 = -48~+48
     rdx[0x1b] = vcd[91] + 14 #Pitch EG Level3 0x10~0x70 = -48~+48
@@ -537,8 +615,12 @@ def vmm2rdx(vmm):
         #rdx[0x12 + opad] = out_4op_rdx[vcd[op4ad+10]] #OUT
         if iscarrier or vcd[op4ad+10] == 0:
             rdx[0x12 + opad] = out_4op_rdx[vcd[op4ad+10]] #OUT
+            # kvslimit=(0,1,2,3,4,5,6,7,0,0,0,0,0,0,0,0)
+            # rdx[0x12 + opad] = rdx[0x12 + opad] - kvslimit[kvs]
         else:
             rdx[0x12 + opad] = out_4op_rdx[vcd[op4ad+10] + 8]
+            # kvslimit=(0,2,4,6,8,10,12,14,0,0,0,0,0,0,0,0)
+            # rdx[0x12 + opad] = rdx[0x12 + opad] - kvslimit[kvs]
         rdx[0x12 + opad] = max(0, min(127, rdx[0x12 + opad] - C3shift))
 
         if op4 == 3: #FEEDBACK operator
@@ -546,6 +628,9 @@ def vmm2rdx(vmm):
             rdx[0x13 + opad] = (0, 1,  2,  4, 8, 16, 32, 64)[vcd[53]]
             # reduce FB level depending on operator OUT level ???
             rdx[0x13 + opad] = int(round(rdx[0x13 + opad] * rdx[0x12+opad] / 127))
+            ## reduce FB level depending on EG sustain level L2 ???
+            #rdx[0x13 + opad] = int(round(rdx[0x13 + opad] * rdx[0x06+opad] / 127))
+
         OSW = acd[(18, 13, 8, 3)[op4]]
 
         if OSW in (1, 6, 7):
@@ -587,6 +672,8 @@ def vmm2rdx(vmm):
         det = int(1.5 * (vcd[12 + op4ad] - 3))
         rdx[0x18 + opad] = det + 64 # DETUNE -64~+63 (center=64)
         rdx[0x19 + opad] = 0 #reserved
+        
+
     if (ALG, rdx[0x12+38], rdx[0x12+38+28]) == (7, 0, 0): #PSS480 2-op FM
         rdx[38:38+28] = rdx[38+2*28:38+3*28]
         rdx[38+28:38+2*28] = rdx[38+3*28:38+4*28]
@@ -700,16 +787,16 @@ def vmm2rdx(vmm):
         rdx[0x1e] = int(round(127 * acd3[6] / 99.))
     if vcd[70] == 1: #DX21 chorus:
         if rdx[0x1d] == 0:
-            rdx[0x1d:0x20] = [3, 50, 50]
+            rdx[0x1d:0x20] = [3, 90, 0]
         elif rdx[0x20] == 0:
-            rdx[0x20:0x23] = [3, 50, 50]
+            rdx[0x20:0x23] = [3, 90, 0]
     
     #set INIT values if effect = Off
     if rdx[0x1d] == 0:
         rdx[0x1e:0x20] = [64, 64]
     if rdx[0x20] == 0:
         rdx[0x21:0x23] = [64, 64]
-    return rdx
+    return cleanrdx(rdx)
 
 def rdx2vmm(rdx, yamaha):
     vcd = fourop.initvcd()
@@ -732,7 +819,7 @@ def rdx2vmm(rdx, yamaha):
     elif rdx[0x11] == 7: #SH
         lfospeed = lfs[rdx[0x12]]
         vcd[54] = dxcommon.closeto(lfspeed, fourop.lfs, True)   #LFS
-    vcd[55] = rdx[0x13]//2 #LFD
+    vcd[55] = fourop.lfd(lfdtime(rdx[0x13])) #LFD
     if rdx[0x14] == 0:
         pmdepth = 0
     else:
@@ -948,6 +1035,7 @@ def rdx2vmm(rdx, yamaha):
     vmm = fourop.v50_ys(vmm)
     return vmm
 
+
 def rdx2vmem(rdx):
     #vced = dx7.initvced()
     #aced = dx7.initaced()
@@ -957,8 +1045,10 @@ def rdx2vmem(rdx):
     vmem = fourop.vmm2vmem(vmm)[0]
     amem = fourop.vmm2vmem(vmm)[1]
     vced = dx7.vmem2vced(vmem)
-    #aced = dx7.vmem2aced(amem)
-     
+
+    #aced = dx7.amem2aced(amem)
+   
+    #LFO
     if rdx[0x11] < 5:
         lfspeed = lfs[rdx[0x12]]
         vced[137] = dxcommon.closeto(lfspeed, dx7.lfs, True) #LFS
@@ -974,10 +1064,14 @@ def rdx2vmem(rdx):
         vced[126+i] = fourop.pr[99 * rdx[0x15 + i] // 127]
         vced[130+i] = 50 + 99 * (rdx[0x19 + i] - 0x40) // 127 #PEG level
 
+    #ALGO
     alg4 = (0, 1, 2, 2, 2, 4, 4, 4, 5, 5, 6, 7)[rdx[0x10]]
     for op in range(4):
         algo6, op6, op6ad = alg6(alg4, op)
         opad = 28*op + 38
+
+        #if rdx[0x10] in (1,9,5):
+        #algo6 = 12,24,27 
 
         [rdxR1, rdxR2, rdxR3, rdxR4, rdxL1, rdxL2, rdxL3, rdxL4]  = rdx[opad + 1:opad + 9]
         vced[0 + op6ad] = dxcommon.closeto(rdxR1, eg_up_dx9_reface)
@@ -1030,23 +1124,32 @@ def rdx2vmem(rdx):
     
     return vmem, amem
 
-def rdx2syx(rdx, ch=0):
-    #HEAD
-    syx = [0xF0, 0x43, ch, 0x7F, 0x1C, 0x00, 0x04, 0x05, 0x0E, 0x0F, 0x00, 0x5E, 0xF7]
+def rdx2syx(rdx, ch=0, p=0):
+    if p==0:
+        a=0x0f
+    else:
+        a=0x00
+        p = (p - 1) % 32
+    rdxhead = [0xf0, 0x43, ch, 0x7f, 0x1c, 0x00]
+
+    #HEADER
+    header = [0x05, 0x0e, a, p]
+    syx = rdxhead + [0x04] + header + [dxcommon.checksum(header), 0xf7]
     #COMMON
     comm = [0x05, 0x30, 0x00, 0x00] + rdx[:38]
-    syx +=  [0xF0, 0x43, ch, 0x7F, 0x1C, 0x00, 0x2A] + comm + [dxcommon.checksum(comm), 0xF7]
+    syx +=  rdxhead + [0x2a] + comm + [dxcommon.checksum(comm), 0xf7]
     #OPERATORS
     op1 = [0x05, 0x31, 0x00, 0x00] + rdx[38:66]
-    syx += [0xF0, 0x43, ch, 0x7F, 0x1C, 0x00, 0x20] + op1 + [dxcommon.checksum(op1), 0xF7]
+    syx += rdxhead + [0x20] + op1 + [dxcommon.checksum(op1), 0xf7]
     op2 = [0x05, 0x31, 0x01, 0x00] + rdx[66:94]
-    syx +=  [0xF0, 0x43, ch, 0x7F, 0x1C, 0x00, 0x20] + op2 + [dxcommon.checksum(op2), 0xF7]
+    syx +=  rdxhead + [0x20] + op2 + [dxcommon.checksum(op2), 0xf7]
     op3 = [0x05, 0x31, 0x02, 0x00] + rdx[94:122]
-    syx += [0xF0, 0x43, ch, 0x7F, 0x1C, 0x00, 0x20] + op3 + [dxcommon.checksum(op3), 0xF7]
+    syx += rdxhead + [0x20] + op3 + [dxcommon.checksum(op3), 0xf7]
     op4 = [0x05, 0x31, 0x03, 0x00] + rdx[122:150]
-    syx += [0xF0, 0x43, ch, 0x7F, 0x1C, 0x00, 0x20] + op4 + [dxcommon.checksum(op4), 0xF7]
+    syx += rdxhead + [0x20] + op4 + [dxcommon.checksum(op4), 0xf7]
     #FOOTER
-    syx += [0xF0, 0x43, ch, 0x7F, 0x1C, 0x00, 0x04, 0x05, 0x0F, 0x0F, 0x00, 0x5D, 0xF7]
+    footer = [0x05, 0x0f, a, p]
+    syx += rdxhead + [0x04] + footer + [dxcommon.checksum(footer), 0xf7]
     return syx
 
 def voicename(rdx):
@@ -1063,9 +1166,12 @@ def cleanrdx(rdx):
     for i in range(len(rdx)):
         rdx[i] = rdx[i] & 127
 
-    rdx[0x0d] = rdx[0xd] & 3 
+    rdx[0x0d] = min(rdx[0xd] & 3, 2) 
+    rdx[0x0f] = max(0x58, min(0x28, rdx[0x0f]))
     rdx[0x10] = min(rdx[0x10] & 15, 11)
-    rdx[0x11] = rdx[0x11] & 7
+    rdx[0x11] = min(rdx[0x11] & 7, 6)
+    for i in (0x19, 0x1a, 0x1b, 0x1c):
+        rdx[i] = max(0x10, min(0x70, rdx[i]))
     rdx[0x1d] = rdx[0x1d] & 7
     rdx[0x20] = rdx[0x20] & 7
     for op in (38, 38+28, 38+2*28, 38+3*28):
@@ -1077,21 +1183,24 @@ def cleanrdx(rdx):
         rdx[op + 0x14] = rdx[op + 0x14] & 1
         rdx[op + 0x15] = rdx[op + 0x15] & 1
         rdx[op + 0x16] = rdx[op + 0x16] & 31
-
+        rdx[op + 0x17] = min(rdx[op + 0x17], 0x63) 
     return rdx
 
 def rdx2txt(rdxdata): 
     paramCommon = ("VOICENAME 1", "VOICENAME 2", "VOICENAME 3", "VOICENAME 4", "VOICENAME 5",
             "VOICENAME 6", "VOICENAME 7", "VOICENAME 8", "VOICENAME 9", "VOICENAME 10",
-            "reserved", "reserved", "TRANSPOSE", "PARTMODE", "PORTA TIME", "PB RANGE", "ALGORITHM", 
+            "reserved", "reserved", "TRANSPOSE", "MONO/POLY", "PORTA TIME", "PB RANGE", "ALGORITHM", 
             "LFO WAVE", "LFO SPEED", "LFO DELAY", "LFO PMD",
-            "PEG RATE 1", "PEG RATE 2", "PEG RATE 3", "PEG RATE 4", "PEG LEVL 1", "PEG LEVL 2", "PEG LEVL 3", "PEG LEVL 4",
-            "FX1 TYPE", "FX1 PARAM 1", "FX1 PARAM 2", "FX2 TYPE  ", "FX2 PARAM 1", "FX2 PARAM 2", "reserved", "reserved", "reserved")
+            "PEG RATE 1", "PEG RATE 2", "PEG RATE 3", "PEG RATE 4", "PEG LEVEL 1", "PEG LEVEL 2", "PEG LEVEL 3", "PEG LEVEL 4",
+            "FX1 TYPE", "FX1 PARAM 1", "FX1 PARAM 2", "FX2 TYPE", "FX2 PARAM 1", "FX2 PARAM 2", "reserved", "reserved", "reserved")
     paramOp = ("OP Off/On", "EG RATE 1", "EG RATE 2", "EG RATE 3", "EG RATE 4", "EG LEVEL 1", "EG LEVEL 2", "EG LEVEL 3", "EG LEVEL 4", 
             "RATE SCALING",
             "SCALING LD", "SCALING RD", "SCALING LC", "SCALING RC",
-            "LFO AMD", "LFO PMD", "PEG Off/On", "VELO SENS", "OUT LEVEL", "FEEDBACK", "FB TYPE",
-            "FREQ MODE", "FREQ COARSE", "FREQ FINE", "FREQ DETUNE", "reserved", "reserved", "reserved")
+            "LFO AMD", "LFO PMD Off/On", "PEG Off/On", "VELO SENS", "OUT LEVEL", "FEEDBACK", "FB TYPE",
+            "FREQ MODE", "freq coarse", "freq fine  ", "FREQ DETUNE", "reserved", "reserved", "reserved")
+    fxTypes = ("Thru", "Distortion", "Touch Wah", "Chorus", "Flanger", "Phaser", "Delay", "Reverb")
+    fxP1 = ("---", "Drive", "Sensibility", "Depth", "Depth", "Depth", "Depth", "Depth")
+    fxP2 = ("---", "Tone", "Rez", "Rate", "Rate", "Rate", "Time", "Time")
     n = len(rdxdata)//150
     dat = []
     if n == 1:
@@ -1105,12 +1214,18 @@ def rdx2txt(rdxdata):
                 pass
             elif pname == "ALGORITHM":
                 s += "{:14} = {:>8}\n".format(paramCommon[i], rdxdata[i] + 1)
-            elif pname in ("TRANSPOSE", "PB RANGE", "PEG LEVL 1", "PEG LEVL 2", "PEG LEVL 3", "PEG LEVL 4"):
+            elif pname in ("TRANSPOSE", "PB RANGE", "PEG LEVEL 1", "PEG LEVEL 2", "PEG LEVEL 3", "PEG LEVEL 4"):
                 s += "{:14} = {:>8}\n".format(paramCommon[i], rdxdata[i]-64)
-            elif pname == "PARTMODE":
+            elif pname == "MONO/POLY":
                 s += "{:14} = {:>8}\n".format(paramCommon[i], ("Poly", "Mono-Full", "Mono-Legato")[rdxdata[i]])
             elif pname == "LFO WAVE":
                 s += "{:14} = {:>8}\n".format(paramCommon[i], ("Sine", "Triangle", "Sawtooth Up", "Sawtooth Down", "Square", "Sample & Hold 8", "Sample & Hold")[rdxdata[i]])
+            elif pname == "FX1 TYPE" or pname == "FX2 TYPE":
+                s += "{:14} = {:>8} ({})\n".format(paramCommon[i], rdxdata[i], fxTypes[rdxdata[i]])
+            elif pname == "FX1 PARAM 1" or pname == "FX2 PARAM 1":
+                s += "{:14} = {:>8} ({})\n".format(paramCommon[i], rdxdata[i], fxP1[rdxdata[i-1]])
+            elif pname == "FX1 PARAM 2" or pname == "FX2 PARAM 2":
+                s += "{:14} = {:>8} ({})\n".format(paramCommon[i], rdxdata[i], fxP2[rdxdata[i-2]])
             else:
                 s += "{:14} = {:>8}\n".format(paramCommon[i], rdxdata[i])
         s += "\n"
@@ -1120,7 +1235,7 @@ def rdx2txt(rdxdata):
             pname = paramOp[i]
             if pname == "reserved":
                 pass
-            elif pname in ("OP Off/On", "LFO PMD", "PEG Off/On"):
+            elif pname in ("OP Off/On", "LFO PMD Off/On", "PEG Off/On"):
                 s += "{:14} = {:>8} {:>8} {:>8} {:>8}\n".format(paramOp[i], 
                         ("Off", "On")[rdxdata[i+38]], 
                         ("Off", "On")[rdxdata[i+66]], 
@@ -1144,13 +1259,18 @@ def rdx2txt(rdxdata):
                         ("Ratio", "Fixed")[rdxdata[i+66]], 
                         ("Ratio", "Fixed")[rdxdata[i+94]], 
                         ("Ratio", "Fixed")[rdxdata[i+122]])
-            elif pname == "FREQ FINE":
-                s += "{:14} = {:>8} {:>8} {:>8} {:>8}\n".format(paramOp[i], rdxdata[i+38], rdxdata[i+66], rdxdata[i+94], rdxdata[i+122])
+            elif pname == "freq coarse":
+                fcrs = "{:>14} = {:>8} {:>8} {:>8} {:>8}\n".format(paramOp[i], rdxdata[i+38], rdxdata[i+66], rdxdata[i+94], rdxdata[i+122])
+            elif pname == "freq fine  ":
+                ffine = "{:>14} = {:>8} {:>8} {:>8} {:>8}\n".format(paramOp[i], rdxdata[i+38], rdxdata[i+66], rdxdata[i+94], rdxdata[i+122])
                 f1 = freq(rdxdata[22+38], rdxdata[23+38], rdxdata[21+38])
                 f2 = freq(rdxdata[22+66], rdxdata[23+66], rdxdata[21+66])
                 f3 = freq(rdxdata[22+94], rdxdata[23+94], rdxdata[21+94])
                 f4 = freq(rdxdata[22+122], rdxdata[23+122], rdxdata[21+122])
-                s += "Ratio | Freq.  = {:>8} {:>8} {:>8} {:>8}\n".format(f1, f2, f3, f4)
+                ffreq = "RATIO | FREQ   = {:>8} {:>8} {:>8} {:>8}\n".format(f1, f2, f3, f4)
+                s += ffreq
+                s += fcrs
+                s += ffine
             elif pname == "FREQ DETUNE":
                 s += "{:14} = {:>8} {:>8} {:>8} {:>8}\n".format(paramOp[i], rdxdata[i+38]-64, rdxdata[i+66]-64, rdxdata[i+94]-64, rdxdata[i+122]-64)
             else:
@@ -1170,7 +1290,8 @@ def freq(crs, fine, mode=0):
         else: 
             freq = 0.5 + fine/200.
     else: #FIXED
-        c = 10 ** min(3, crs//8)
+        c = 10 ** min(3, crs>>3)
+        #n = 10 ** (1/100)
         n = 9.772 ** (1/99.)
         freq = c * (n ** fine)
     return round(freq, 3)

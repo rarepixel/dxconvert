@@ -121,7 +121,10 @@ def read2(mid_in, mid_out, infile, offset, check=False):
             for t in s:
                 f.write(base64.b64decode(t.text))
         with gzip.open(tmpgz, 'rb') as f:
-            data = dxcommon.string2list(f.read())
+            if sys.hexversion > 0x3000000:
+                data = list(f.read())
+            else:
+                data = dxcommon.string2list(f.read())
 
         size = len(data) 
         os.remove(tmpgz)
@@ -368,9 +371,11 @@ def read2(mid_in, mid_out, infile, offset, check=False):
             korgmid = data[i+5:i+5+7544]
             korgdat = korg.korg7to8(korgmid)
             for i in range(100):
-                vmm = korg.bnk2vmm(korgdat[66*i:66*(i+1)], ds8)
-                dx7data += fourop.vmm2vmem(vmm)[0]
-                dx72data += fourop.vmm2vmem(vmm)[1]
+                dx7data += korg.bnk2vmem(korgdat[66*i:66*(i+1)], ds8)[0]
+                dx72data += korg.bnk2vmem(korgdat[66*i:66*(i+1)], ds8)[1]
+                #vmm = korg.bnk2vmm(korgdat[66*i:66*(i+1)], ds8)
+                #dx7data += fourop.vmm2vmem(vmm)[0]
+                #dx72data += fourop.vmm2vmem(vmm)[1]
  
     for i in range(size-97): #1 program
         if data[i]==0xf0 and data[i+1]==0x42 and (data[i+2] & 0xf0)==0x30 and (data[i+3] in (0x1a, 0x13)) and data[i+4]==0x40:
@@ -382,9 +387,11 @@ def read2(mid_in, mid_out, infile, offset, check=False):
                 ds8 = False
             korgmid = data[i+5:i+5+96]
             korgdat = korg.korg7to8(korgmid)
-            vmm = korg.vce2vmm(korgdat, ds8)
-            dx7data += fourop.vmm2vmem(vmm)[0]
-            dx72data += fourop.vmm2vmem(vmm)[1]
+            dx7data += korg.vce2vmem(korgdat, ds8)[0]
+            dx72data += korg.vce2vmem(korgdat, ds8)[1]
+            #vmm = korg.vce2vmm(korgdat, ds8)
+            #dx7data += fourop.vmm2vmem(vmm)[0]
+            #dx72data += fourop.vmm2vmem(vmm)[1]
 
     # KORG Z3 all sound
     for i in range(size-12800):

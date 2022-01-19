@@ -151,7 +151,7 @@ def cli_main(argv=sys.argv):
     elif yamaha in ('reface', 'dxreface', 'refacedx'):
         yamaha = 'refacedx'
         REFACE = True
-        split = 1
+        split = 32
     else:
         split = 32
     

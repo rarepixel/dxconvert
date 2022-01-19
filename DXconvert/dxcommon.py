@@ -7,8 +7,8 @@ MID_OUT = "MIDI"
 MID_IN = "MIDI"
 
 # Don't change anything below this line
-PROGRAMVERSION = "3.0.7"
-PROGRAMDATE = "20200626"
+PROGRAMVERSION = "3.1.6"
+PROGRAMDATE = "20210618"
 
 try:
     import rtmidi

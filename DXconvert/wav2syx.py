@@ -54,7 +54,7 @@ def wav2syx(wavfile, mode='tx'):
                 for i in range(48):
                     dxtxdata += cas2vmem(data, 54 + 128*i)
 
-            elif (data[8+64] in range(20)) and (sum(data[8:8+64]) == 256*data[8+65] + data[8+66]):
+            elif (data[8+64] in range(20)) and (sum(data[8:8+64]) == 256*data[8+65] + data[8+66]): #DX9
                 for i in range(len(data)-66):
                     if data[i:i+8] == [0x1f, 0xa6, 0xde, 0xba, 0xcc, 0x13, 0x7d, 0x74]:
                         if data[i+8+64] in range(20) and (sum(data[i+8:i+8+65]) == 256*data[i+8+65] + data[i+8+66]):
@@ -93,31 +93,31 @@ def dx9cas2vmem(data, offset):
     vmem = dx7.initvmem()
     vmem[99] = 0 #OP1 level
     voicenr = data[offset+64]
-    if voicenr<9:
-        voicenr = ' '+str(voicenr+1) + '    '
-    else:
-        voicenr = str(voicenr+1) + '    '
-    vmem[118:128] = dxcommon.string2list('DX9.'+voicenr)
+    voicename = "DX9.{:>2}    ".format(voicenr+1)
+    vmem[118:128] = dxcommon.string2list(voicename)
     for opad in range(4):
         opa9 = 14*opad
         opa7 = 17*opad
         for i in range(8):
             vmem[opa7 + i] = dd[opa9 + i]
         vmem[opa7 + 8 ] = 15 # BP = C1
-        vmem[opa7 + 11] = 4 # RC=-EXP LC=-LIN
+        #vmem[opa7 + 9] = LD
         vmem[opa7 + 10] = dd[opa9 + 8]
+        vmem[opa7 + 11] = 4 # RC=-EXP LC=-LIN
         vmem[opa7 + 12] = (dd[opa9 + 13] << 3) + (dd[opa9 + 9] & 7)
+        #vmem[opa7 + 13] = KVS(0-7), AMS(0-3)
         vmem[opa7 + 14] = dd[opa9 + 10]
         vmem[opa7 + 15] = dd[opa9 + 11] << 1
         vmem[opa7 + 16] = dd[opa9 + 12]
-    vmem[0x6e] = (0, 13, 7, 6, 4, 21, 30, 31)[dd[0x38]]
-    vmem[0x6f] = dd[0x39]
-    vmem[0x70] = dd[0x3a]
-    vmem[0x71] = dd[0x3b]
-    vmem[0x72] = dd[0x3c]
-    vmem[0x73] = dd[0x3d]
-    vmem[0x74] = dd[0x3e] << 1
-    vmem[0x75] = dd[0x3f] + 12
+    #vmem[102:110] = PEG
+    vmem[0x6e] = (0, 13, 7, 6, 4, 21, 30, 31)[dd[0x38]] #ALG
+    vmem[0x6f] = dd[0x39] #OSCSYNC=0, FB
+    vmem[0x70] = dd[0x3a] #LFS
+    vmem[0x71] = dd[0x3b] #LFD
+    vmem[0x72] = dd[0x3c] #PMD
+    vmem[0x73] = dd[0x3d] #AMD
+    vmem[0x74] = dd[0x3e] << 1 #(PMS) LFW (LFO KEYSYNC) 
+    vmem[0x75] = dd[0x3f] + 12 #TRSP
     return vmem
 
 def dx9cas2vmm(data, offset):

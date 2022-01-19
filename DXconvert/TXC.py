@@ -779,7 +779,10 @@ def write_rdx(outfile, rdxdata, channel, nosplit, split=32, yamaha='refacedx', m
 
     else:
         for pp in range(patchcount): #save as VCED sysex
-            dat += reface.rdx2syx(rdxdata[150*pp:150*(pp+1)], channel)
+            if patchcount == 1:
+                dat += reface.rdx2syx(rdxdata[150*pp:150*(pp+1)], channel, 0)
+            else:
+                dat += reface.rdx2syx(rdxdata[150*pp:150*(pp+1)], channel, pp+1)
 
     if nosplit==False:
         if mid:

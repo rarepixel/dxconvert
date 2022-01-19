@@ -1,5 +1,31 @@
 DXconvert HISTORY
 -----------------
+3.1.6 (20210606)
+- Chorus FX low rate, high depth on RefaceDX to match DX21/DX27s Chorus
+- minor bugfixes
+
+3.1.5 (20210604)
+- Improved LFO conversion based on new measurements
+- some bugfixes
+
+3.1.4 (20210515)
+- Improvements in 4OP->DX7 EG conversions
+
+3.1.3 (20210507)
+3.1.2 (20210424)
+- More improvements KORG 707/DS8 conversions
+
+3.1.1 (20210420)
+- Some improvements in KORG 707/DS8->DX/TX conversions (Thanks to ChunkyBloke)
+
+3.1.0 (20210316)
+- Support for undocumented, but very usable, Reface DX bankdump format. 
+- Limit Reface DX PEG Level range -/+ 48
+
+3.0.8 (20201027)
+- fixed bug reading JSynthLib patchlib.xml data with Python3
+- improved Reface DX TXT parameter list output.
+
 3.0.7 (20200626)
 - Reworked TX81Z (etc) to RefaceDX Feedback level conversion
 - Reworked TX81Z Operator wave to RefaceDX Feedback approximations

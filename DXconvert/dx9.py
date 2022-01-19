@@ -27,45 +27,30 @@ out4 = (0, 0, 0, 1, 2, 3, 4, 4, 5, 5,
         91, 91, 91, 91, 91, 91, 91, 91)
 
 def AR(r):
-    for n in range(1, 32):
-        if r <= fourop.r1[n]:
-            break
-    if (fourop.r1[n] - r) < (r - fourop.r1[n-1]):
-        return n
-    else:
-        return n-1
+    #R1 = 3*AR + 10
+    AR = (r - 10)/3
+    return min(31, max(0, int(round(AR))))
+
 def D1R(r):
-    for n in range(1, 32):
-        if r <= fourop.r2[n]:
-            break
-    if (fourop.r2[n] - r) < (r - fourop.r2[n-1]):
-        return n
-    else:
-        return n-1
+    #R2 = 3*D1R + 6
+    D1R = (r - 6)/3
+    return min(31, max(0, int(round(D1R))))
+
 def D2R(r):
-    for n in range(1, 32):
-        if r <= fourop.r3[n]:
-            break
-    if (fourop.r3[n] - r) < (r - fourop.r3[n-1]):
-        return n
-    else:
-        return n-1
+    return D1R(r)
+
 def RR(r):
-    for n in range(1, 16):
-        if r <= fourop.r4[n]:
-            break
-    if (fourop.r4[n] - r) < (r - fourop.r4[n-1]):
-        return n
-    else:
-        return n-1
+    #R4 = 6*RR + 10
+    RR = (r - 10) / 6
+    return min(15, max(1, int(round(RR))))
+
 def D1L(l):
-    for n in range(1, 16):
-        if l <= fourop.l2[n]:
-            break
-    if (fourop.l2[n] - l) < (l - fourop.l2[n-1]):
-        return n
+    #L2 = 4*D2L + 40
+    if l == 0:
+        return 0
     else:
-        return n-1
+        D1L = (l -40) / 4
+    return min(15, max(0, int(round(D1L))))
 
 pms_factor = fourop.pms_factor
 
@@ -189,10 +174,12 @@ def dx9to4op(vmem):
     vcd[53] = vced[135] #FBL
     lfspeed = dx7.lfs[vced[137]]
     vcd[54] = dxcommon.closeto(lfspeed, fourop.lfs)  #LFS
-    vcd[55] = vced[138] #LFD
+    lfdtime = dx7.lfdtime(vced[138])
+    vcd[55] = fourop.lfd(lfdtime) #LFD
     if vced[143] != 0:
         vcd[56] = min(99, int(round(vced[139] / pms_factor[vced[143]])))  #PMD
-    vcd[57] = vced[140] #AMD
+    amdepth = dx7.amd[vced[140]]
+    vcd[57] = dxcommon.closeto(amdepth, fourop.amd) #AMD
     vcd[58] = vced[136] #SYNC
     vcd[59] = (2, 2, 0, 1, 2, 3, 2, 2)[vced[142]] #LFW tri, tri(sawdown), sawup, sqr, tri(sin), s/h 
     vcd[60] = vced[143] #PMS

@@ -443,7 +443,7 @@ def name2seven(name):
             n += 1
         if n == 7:
             break
-    print("{} ({})".format(dxcommon.list2string(newname), len(newname)))
+    #print("{} ({})".format(dxcommon.list2string(newname), len(newname)))
     return newname
 
 def fbclean(fb):
